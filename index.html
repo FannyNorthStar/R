@@ -283,6 +283,91 @@ header {
 .btn-share:hover { border-color: var(--text-soft); color: var(--text); }
 .btn-share:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 
+/* Instagram button */
+.btn-insta {
+  width: 100%;
+  max-width: 320px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  transition: transform 0.12s, opacity 0.12s;
+}
+.btn-insta:hover { opacity: 0.9; }
+.btn-insta:active { transform: scale(0.97); }
+.btn-insta:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
+
+/* Story overlay */
+.story-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.story-overlay.open { display: flex; }
+.story-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.story-preview-wrap canvas {
+  width: 280px;
+  height: 497px;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.story-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 280px;
+}
+.story-btn {
+  padding: 14px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+.story-btn:hover { opacity: 0.85; }
+.story-btn.primary {
+  color: #fff;
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+.story-btn.secondary {
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+}
+.story-btn.close {
+  color: rgba(255,255,255,0.5);
+  background: none;
+  font-weight: 400;
+  font-size: 0.82rem;
+}
+
+@media (min-width: 481px) {
+  .story-preview-wrap canvas {
+    width: 320px;
+    height: 568px;
+  }
+  .story-actions { width: 320px; }
+}
+
 /* Footer */
 footer {
   margin-top: 40px;
@@ -326,16 +411,28 @@ footer a:hover { text-decoration: underline; }
 
   <div class="btn-row">
     <button class="btn-main" id="btn-next">Voir un autre vote</button>
+    <button class="btn-insta" id="btn-insta">Partager en story Instagram</button>
     <div class="share-row">
-      <button class="btn-share" id="btn-img" title="Télécharger l'image pour Instagram / stories">📸 Image</button>
-      <button class="btn-share" id="btn-wa" title="Envoyer par WhatsApp">💬 WhatsApp</button>
-      <button class="btn-share" id="btn-copy" title="Copier le texte">📋 Copier</button>
-      <button class="btn-share" id="btn-native" title="Partager">↗ Partager</button>
+      <button class="btn-share" id="btn-wa">💬 WhatsApp</button>
+      <button class="btn-share" id="btn-copy">📋 Copier</button>
+      <button class="btn-share" id="btn-native">↗ Plus</button>
     </div>
     <div class="btn-filter" id="filters"></div>
   </div>
   <div class="counter" id="counter"></div>
   <canvas id="shareCanvas" style="display:none"></canvas>
+
+  <!-- Story preview overlay -->
+  <div class="story-overlay" id="storyOverlay">
+    <div class="story-preview-wrap">
+      <canvas id="storyCanvas"></canvas>
+      <div class="story-actions">
+        <button class="story-btn primary" id="storyShare">Partager en story</button>
+        <button class="story-btn secondary" id="storySave">Enregistrer l'image</button>
+        <button class="story-btn close" id="storyClose">Fermer</button>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <p>Toutes les données proviennent de sources publiques et vérifiables : <a href="https://www.assemblee-nationale.fr" target="_blank">assemblee-nationale.fr</a>, <a href="https://datan.fr" target="_blank">datan.fr</a>, <a href="https://www.europarl.europa.eu" target="_blank">europarl.europa.eu</a>. Chaque carte contient un lien direct vers la source.</p>
@@ -647,110 +744,159 @@ function shareWA() {
 }
 
 function shareNative() {
-  const f = getFiltered();
-  const v = f[currentIdx];
   if (navigator.share) {
     navigator.share({ title: 'Ils n\'ont pas changé', text: getShareText() }).catch(() => {});
-  } else {
-    copyText();
-  }
+  } else { copyText(); }
 }
 
-function generateImage() {
+// ─── STORY IMAGE GENERATOR ───
+function openStory() {
   const f = getFiltered();
   const v = f[currentIdx];
-  const c = document.getElementById('shareCanvas');
-  const W = 1080, H = 1350; // 4:5 Instagram
+  renderStory(v);
+  document.getElementById('storyOverlay').classList.add('open');
+}
+
+function closeStory() {
+  document.getElementById('storyOverlay').classList.remove('open');
+}
+
+function renderStory(v) {
+  const c = document.getElementById('storyCanvas');
+  const W = 1080, H = 1920;
   c.width = W; c.height = H;
   const ctx = c.getContext('2d');
 
-  // Background
-  ctx.fillStyle = '#f6f5f1';
+  // Dark gradient background
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#1a1a2e');
+  grad.addColorStop(0.5, '#16213e');
+  grad.addColorStop(1, '#0f0f1a');
+  ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // Top accent bar
-  ctx.fillStyle = '#1a1a2e';
-  ctx.fillRect(0, 0, W, 8);
+  // Subtle texture dots
+  ctx.fillStyle = 'rgba(255,255,255,0.015)';
+  for (let i = 0; i < 300; i++) {
+    ctx.beginPath();
+    ctx.arc(Math.random()*W, Math.random()*H, Math.random()*2+0.5, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Top — site name
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font = '500 28px Inter, sans-serif';
+  ctx.fillText('ilsnontpaschange.netlify.app', W/2, 100);
 
   // Title
-  ctx.fillStyle = '#1a1a2e';
-  ctx.font = 'italic 600 52px Georgia, serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('Ils n\'ont pas changé', W/2, 100);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'italic 600 64px Georgia, serif';
+  ctx.fillText('Ils n\'ont pas changé', W/2, 220);
 
-  // Thin line
-  ctx.strokeStyle = '#e8e6e1';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(80, 135); ctx.lineTo(W-80, 135); ctx.stroke();
+  // Decorative line
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(200, 270); ctx.lineTo(W-200, 270); ctx.stroke();
 
-  // Theme tag
-  ctx.font = '500 28px Inter, sans-serif';
-  ctx.fillStyle = '#6b6b6b';
-  ctx.textAlign = 'center';
-  ctx.fillText(v.cat + (v.date ? ' · ' + v.date : ''), W/2, 190);
+  // Theme pill
+  ctx.font = '500 30px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillText(v.cat + (v.date ? ' · ' + v.date : ''), W/2, 340);
 
-  // Vote title — word wrap
-  ctx.font = '600 42px Georgia, serif';
-  ctx.fillStyle = '#2c2c2c';
-  ctx.textAlign = 'center';
-  const titleLines = wrapText(ctx, v.title, W - 160, 42);
-  let y = 260;
-  titleLines.forEach(line => { ctx.fillText(line, W/2, y); y += 54; });
+  // Vote title
+  ctx.font = '600 50px Georgia, serif';
+  ctx.fillStyle = '#ffffff';
+  const titleLines = wrapText(ctx, v.title, W - 160, 50);
+  let y = 440;
+  titleLines.forEach(line => { ctx.fillText(line, W/2, y); y += 66; });
 
   // Badge
-  y += 20;
-  const badgeColors = {
-    'contre': ['#fdf0ee','#c0392b'],
-    'abstention': ['#fef9ee','#d4880f'],
-    'absent': ['#f4f4f4','#7f8c8d'],
-    'pour-bad': ['#f9f0fc','#8e44ad'],
-    'pour': ['#edf7ee','#27864a']
-  };
-  const bc = badgeColors[v.badge] || badgeColors.contre;
+  y += 30;
+  const bc = {
+    'contre': ['#c0392b','#ffffff'], 'abstention': ['#d4880f','#ffffff'],
+    'absent': ['#7f8c8d','#ffffff'], 'pour-bad': ['#8e44ad','#ffffff'],
+    'pour': ['#27864a','#ffffff']
+  }[v.badge] || ['#c0392b','#ffffff'];
   const badgeText = 'Le RN a voté : ' + v.pos;
-  ctx.font = '600 30px Inter, sans-serif';
-  const bw = ctx.measureText(badgeText).width + 48;
-  const bx = (W - bw) / 2;
+  ctx.font = '700 34px Inter, sans-serif';
+  const bw = ctx.measureText(badgeText).width + 60;
   ctx.fillStyle = bc[0];
-  roundRect(ctx, bx, y - 32, bw, 50, 10);
+  roundRect(ctx, (W-bw)/2, y-36, bw, 56, 12);
   ctx.fill();
   ctx.fillStyle = bc[1];
-  ctx.textAlign = 'center';
   ctx.fillText(badgeText, W/2, y);
 
-  // Explanation — word wrap
-  y += 70;
-  ctx.font = '400 32px Inter, sans-serif';
-  ctx.fillStyle = '#2c2c2c';
-  const expLines = wrapText(ctx, v.explain, W - 160, 32);
-  expLines.forEach(line => { ctx.fillText(line, W/2, y); y += 46; });
+  // Explanation
+  y += 80;
+  ctx.font = '400 36px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  const expLines = wrapText(ctx, v.explain, W - 160, 36);
+  expLines.forEach(line => { ctx.fillText(line, W/2, y); y += 52; });
 
   // Source
-  y += 30;
-  ctx.font = '400 24px Inter, sans-serif';
-  ctx.fillStyle = '#6b6b6b';
+  y += 40;
+  ctx.font = '400 26px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
   ctx.fillText('Source : ' + v.src, W/2, y);
 
-  // Bottom bar
-  ctx.fillStyle = '#1a1a2e';
-  ctx.fillRect(0, H - 90, W, 90);
-  ctx.fillStyle = '#f6f5f1';
-  ctx.font = '500 30px Inter, sans-serif';
-  ctx.fillText('ilsnontpaschange.netlify.app', W/2, H - 40);
+  // Bottom CTA
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  roundRect(ctx, 140, H - 200, W - 280, 70, 35);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '500 28px Inter, sans-serif';
+  ctx.fillText('55 votes vérifiés ↗', W/2, H - 155);
 
-  // Download
+  // Bottom accent
+  const gradBot = ctx.createLinearGradient(200, H-60, W-200, H-60);
+  gradBot.addColorStop(0, '#f09433');
+  gradBot.addColorStop(0.25, '#e6683c');
+  gradBot.addColorStop(0.5, '#dc2743');
+  gradBot.addColorStop(0.75, '#cc2366');
+  gradBot.addColorStop(1, '#bc1888');
+  ctx.strokeStyle = gradBot;
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(200, H-60); ctx.lineTo(W-200, H-60); ctx.stroke();
+}
+
+function getStoryBlob() {
+  return new Promise(resolve => {
+    document.getElementById('storyCanvas').toBlob(resolve, 'image/png');
+  });
+}
+
+async function shareStory() {
+  const blob = await getStoryBlob();
+  const file = new File([blob], 'ils-nont-pas-change.png', { type: 'image/png' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'Ils n\'ont pas changé',
+        text: 'Ce que le RN vote vraiment.'
+      });
+    } catch(e) { /* user cancelled */ }
+  } else {
+    saveStory();
+    showToast('Image enregistrée — ouvre Instagram et ajoute-la en story');
+  }
+}
+
+function saveStory() {
+  const c = document.getElementById('storyCanvas');
   c.toBlob(blob => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'ils-nont-pas-change-' + v.cat.toLowerCase().replace(/[^a-z]/g,'') + '.png';
+    a.download = 'ils-nont-pas-change.png';
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Image téléchargée — prête à poster');
+    showToast('Image enregistrée');
   }, 'image/png');
 }
 
-function wrapText(ctx, text, maxW, fontSize) {
+function wrapText(ctx, text, maxW) {
   const words = text.split(' ');
   const lines = [];
   let line = '';
@@ -759,9 +905,7 @@ function wrapText(ctx, text, maxW, fontSize) {
     if (ctx.measureText(test).width > maxW && line) {
       lines.push(line);
       line = w;
-    } else {
-      line = test;
-    }
+    } else { line = test; }
   });
   if (line) lines.push(line);
   return lines;
@@ -769,16 +913,11 @@ function wrapText(ctx, text, maxW, fontSize) {
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
-  ctx.moveTo(x+r, y);
-  ctx.lineTo(x+w-r, y);
-  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-  ctx.lineTo(x+w, y+h-r);
-  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-  ctx.lineTo(x+r, y+h);
-  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-  ctx.lineTo(x, y+r);
-  ctx.quadraticCurveTo(x, y, x+r, y);
-  ctx.closePath();
+  ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r); ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h); ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r); ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
 }
 
 function showToast(msg) {
@@ -801,10 +940,16 @@ CATS.forEach(cat => {
 
 // Init
 document.getElementById('btn-next').addEventListener('click', next);
-document.getElementById('btn-img').addEventListener('click', generateImage);
+document.getElementById('btn-insta').addEventListener('click', openStory);
 document.getElementById('btn-wa').addEventListener('click', shareWA);
 document.getElementById('btn-copy').addEventListener('click', copyText);
 document.getElementById('btn-native').addEventListener('click', shareNative);
+document.getElementById('storyShare').addEventListener('click', shareStory);
+document.getElementById('storySave').addEventListener('click', saveStory);
+document.getElementById('storyClose').addEventListener('click', closeStory);
+document.getElementById('storyOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeStory();
+});
 
 // Show first card
 const startIdx = Math.floor(Math.random() * V.length);
