@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ils n'ont pas changé</title>
-<meta name="description" content="Ce que le RN vote vraiment. Les faits, les sources, rien d'autre.">
+<meta name="description" content="Ce que le RN vote vraiment, avec les sources pour vérifier.">
 <meta property="og:title" content="Ils n'ont pas changé">
 <meta property="og:description" content="Ce que le RN vote vraiment à l'Assemblée et au Parlement européen. Vérifiable, sourcé.">
 <meta property="og:type" content="website">
@@ -41,6 +41,8 @@
     --abstention-bg: #2a2418;
     --absent-bg: #1e1e1e;
     --pour-bad-bg: #241a28;
+    --pour-bg: #1a2a1e;
+    --pour-color: #5cb870;
     --border: #333;
     --link: #60a5fa;
   }
@@ -156,6 +158,7 @@ header {
 .vote-badge.abstention { background: var(--abstention-bg); color: var(--abstention); }
 .vote-badge.absent { background: var(--absent-bg); color: var(--absent); }
 .vote-badge.pour-bad { background: var(--pour-bad-bg); color: var(--pour-bad); }
+.vote-badge.pour { background: #edf7ee; color: #27864a; }
 
 .card-explain {
   font-size: 0.9rem;
@@ -300,7 +303,7 @@ footer a:hover { text-decoration: underline; }
 <div class="container">
   <header>
     <h1 class="site-title">Ils n'ont <span>pas</span> changé</h1>
-    <p class="tagline">Ce que le RN vote vraiment. Pas de commentaire, juste les faits — et les liens pour vérifier.</p>
+    <p class="tagline">Ce que le RN vote vraiment. Avec les liens pour vérifier vous-même.</p>
   </header>
 
   <div class="card" id="card">
@@ -413,13 +416,13 @@ url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
 explain:"Les agriculteurs bio traversent une crise. Un texte proposait de les soutenir financièrement. Le RN s'est abstenu.",
 url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
 
-{cat:"Agriculture",title:"Réintroduction des néonicotinoïdes (pesticides tueurs d'abeilles)",pos:"POUR la réintroduction",badge:"pour-bad",date:"",lvl:"Assemblée nationale",
-explain:"Les néonicotinoïdes sont des pesticides qui tuent les abeilles et les pollinisateurs, essentiels à l'agriculture. Ils avaient été interdits. Le RN a voté pour les réautoriser.",
-url:"https://bonpote.com/pollution-pesticides-et-cadmium-le-rn-vote-contre-la-sante-des-francais/",src:"bonpote.com"},
+{cat:"Agriculture",title:"Réautorisation des néonicotinoïdes (pesticides tueurs d'abeilles)",pos:"POUR la réautorisation",badge:"pour-bad",date:"Octobre 2020",lvl:"Assemblée nationale",
+explain:"Les néonicotinoïdes sont des pesticides qui déciment les abeilles et les pollinisateurs — sans eux, pas de fruits, pas de légumes, pas de miel. Ils avaient été interdits en 2018. Le RN a soutenu leur réautorisation et voté contre l'amendement qui voulait raccourcir cette dérogation.",
+url:"https://datan.fr/votes/legislature-15/vote_2936",src:"datan.fr — vote 2936"},
 
 {cat:"Agriculture",title:"Réduction de l'usage des pesticides",pos:"CONTRE (systématique)",badge:"contre",date:"2022–2026",lvl:"Assemblée nationale",
-explain:"Les pesticides sont liés à des cancers, notamment chez les agriculteurs et les enfants vivant près des champs. Sur l'ensemble des votes liés aux pesticides, le RN s'oppose quasi systématiquement à leur réduction.",
-url:"https://bonpote.com/pollution-pesticides-et-cadmium-le-rn-vote-contre-la-sante-des-francais/",src:"bonpote.com — analyse détaillée"},
+explain:"On retrouve des résidus de pesticides dans les fruits, les légumes, l'eau du robinet. Ils sont liés à des cancers, des troubles hormonaux, et des maladies neurologiques — chez les agriculteurs mais aussi chez les riverains et les enfants. Sur l'ensemble des votes liés aux pesticides et à l'agriculture biologique, le RN s'oppose quasi systématiquement à leur réduction.",
+url:"https://bonpote.com/pollution-pesticides-et-cadmium-le-rn-vote-contre-la-sante-des-francais/",src:"bonpote.com — analyse de 11 000 votes"},
 
 {cat:"Agriculture",title:"Taxe sur la publicité pour aliments nocifs pour la santé",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
 explain:"Limiter les pubs pour la malbouffe, y compris celles qui ciblent les enfants. Le RN a voté contre.",
@@ -529,6 +532,36 @@ url:"https://lepoing.net/a-perpignan-les-associations-catalanistes-ne-touchent-p
 {cat:"Municipal",title:"Nouvelles mairies RN 2026 : suppression des commémorations",pos:"Supprimées",badge:"contre",date:"2026",lvl:"Mairies RN",
 explain:"En moins de trois mois, les nouveaux maires RN ont supprimé des commémorations du 1er-Mai et de l'abolition de l'esclavage, et fermé des centres sociaux.",
 url:"https://www.mediacites.fr/on-a-deja-essaye/premieres-manoeuvres/",src:"Mediacités — enquête « On a déjà essayé »"},
+
+// ─── CONSOMMATION / QUALITÉ DE VIE ───
+{cat:"Consommation",title:"Bilan carbone obligatoire pour les entreprises financées par l'État",pos:"ABSTENTION",badge:"abstention",date:"Novembre 2023",lvl:"Assemblée nationale",
+explain:"Quand une entreprise reçoit de l'argent public via le plan France 2030, on devrait savoir si elle pollue. Le RN s'est abstenu sur cette obligation de transparence.",
+url:"https://datan.fr/votes/legislature-16/vote_2836",src:"datan.fr — vote 2836"},
+
+{cat:"Consommation",title:"Impact environnemental de l'industrie textile (fast fashion)",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Réduire la pollution liée aux vêtements produits en masse à l'autre bout du monde, dans des conditions sociales et écologiques douteuses. Le RN a voté contre.",
+url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
+
+{cat:"Consommation",title:"Devoir de vigilance des multinationales (travail forcé, pollution)",pos:"CONTRE",badge:"contre",date:"2021",lvl:"Parlement européen",
+explain:"Ce texte oblige les grandes marques à vérifier que personne n'a été exploité ni que l'environnement n'a été détruit dans leur chaîne de production. Seuls les eurodéputés d'extrême droite ont voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Environnement",title:"Interdiction des publicités lumineuses",pos:"CONTRE (blocage)",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Ces écrans lumineux dans les vitrines qui éclairent les rues la nuit, gaspillent de l'énergie et polluent visuellement nos villes. Le RN a contribué à bloquer leur encadrement.",
+url:"https://lareleveetlapeste.fr/lecologie-et-le-social-les-grands-absents-des-votes-du-rn-a-lassemblee-nationale/",src:"La Relève et La Peste (sources Datan)"},
+
+{cat:"Environnement",title:"Abaissement du seuil de malus pour les véhicules les plus lourds",pos:"CONTRE",badge:"contre",date:"Octobre 2024",lvl:"Assemblée nationale",
+explain:"Augmenter le malus sur les véhicules thermiques les plus lourds, qui polluent davantage et sont plus dangereux pour les piétons. Le RN s'y est opposé.",
+url:"https://lareleveetlapeste.fr/lecologie-et-le-social-les-grands-absents-des-votes-du-rn-a-lassemblee-nationale/",src:"La Relève et La Peste + Caradisiac"},
+
+{cat:"Consommation",title:"Suppression de la redevance audiovisuelle publique",pos:"POUR la suppression",badge:"pour-bad",date:"",lvl:"Assemblée nationale",
+explain:"France Inter, France 2, Arte, France Culture : l'audiovisuel public produit de l'info vérifiée et des programmes culturels accessibles à tous. Le RN a voté pour supprimer son financement dédié.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+// ─── VOTE POSITIF (crédibilité) ───
+{cat:"Transparence",title:"Transparence des cabinets de conseil auprès de l'État (affaire McKinsey)",pos:"POUR",badge:"pour",date:"",lvl:"Assemblée nationale",
+explain:"Obliger les cabinets de conseil comme McKinsey à déclarer leurs interventions auprès des administrations. Sur ce vote, le RN a voté pour, comme la quasi-totalité de l'Assemblée.",
+url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
 ];
 
 const CATS = [...new Set(V.map(v => v.cat))];
