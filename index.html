@@ -101,6 +101,21 @@ header {
   max-width: 360px;
   margin: 0 auto;
 }
+.sources-banner {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  margin-top: 10px;
+  padding: 6px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  display: inline-block;
+}
+.sources-banner a {
+  color: var(--link);
+  text-decoration: none;
+}
+.sources-banner a:hover { text-decoration: underline; }
 
 /* Card */
 .card {
@@ -418,6 +433,7 @@ footer a:hover { text-decoration: underline; }
   <header>
     <h1 class="site-title">Ils n'ont <span>pas</span> changé</h1>
     <p class="tagline">Ce que le RN vote vraiment. Avec les liens pour vérifier vous-même.</p>
+    <p class="sources-banner">Sources : <a href="https://www.assemblee-nationale.fr" target="_blank">Assemblée nationale</a> · <a href="https://www.europarl.europa.eu" target="_blank">Parlement européen</a> · <a href="https://datan.fr" target="_blank">Datan (CNRS)</a></p>
   </header>
 
   <div class="card" id="card">
@@ -434,8 +450,8 @@ footer a:hover { text-decoration: underline; }
   <div class="btn-row">
     <button class="btn-main" id="btn-next">Voir un autre vote</button>
     <div class="share-main-row">
-      <button class="btn-insta" id="btn-insta">📸 Story Instagram</button>
-      <button class="btn-whatsapp" id="btn-wa">💬 WhatsApp</button>
+      <button class="btn-insta" id="btn-insta">📸 Partager en story</button>
+      <button class="btn-whatsapp" id="btn-wa">💬 Envoyer à un proche</button>
     </div>
     <div class="share-row">
       <button class="btn-share" id="btn-copy">📋 Copier</button>
@@ -704,6 +720,10 @@ url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
 {cat:"Europe",title:"Alliance avec Vox, le parti qui combat la mémoire des républicains espagnols",pos:"Même groupe",badge:"pour-bad",date:"Depuis 2024",lvl:"Parlement européen",
 explain:"Le RN siège dans le même groupe européen (Patriots for Europe) que Vox, le parti espagnol qui veut abroger la loi condamnant le franquisme et réhabilitant les victimes de la guerre civile. Au Parlement européen, cette alliance est un choix, pas un hasard.",
 url:"https://www.jean-jaures.org/publication/lextreme-droite-transatlantique-mobilisee-par-les-espagnoles-vox-et-disenso/",src:"Fondation Jean-Jaurès + europarl.europa.eu"},
+
+{cat:"Europe",title:"89% : le RN vote avec l'AfD, le parti allemand aux relents nazis",pos:"89% de soutien",badge:"pour-bad",date:"2024–2026",lvl:"Parlement européen",
+explain:"Le RN dit avoir rompu avec l'AfD après que leur leader a déclaré qu'un SS « n'était pas automatiquement un criminel ». Dans les faits, le RN soutient 89% des amendements de l'AfD et vote comme eux dans 69% des cas. La rupture est de façade.",
+url:"https://bonpote.com/exclusif-le-rn-continue-de-voter-massivement-avec-lafd-au-parlement-europeen/",src:"bonpote.com — analyse exclusive"},
 ];
 
 const CATS = [...new Set(V.map(v => v.cat))];
@@ -741,12 +761,18 @@ function fill(v) {
   document.getElementById('counter').textContent = (idx + 1) + ' / ' + f.length + ' votes référencés';
 }
 
+let viewCount = 0;
+
 function next() {
   const f = getFiltered();
   let idx;
   do { idx = Math.floor(Math.random() * f.length); } while (idx === currentIdx && f.length > 1);
   currentIdx = idx;
   show(f[idx], true);
+  viewCount++;
+  if (viewCount === 4) {
+    setTimeout(() => showToast('Tu as vu 4 votes. Il y en a ' + (V.length - 4) + ' autres.'), 600);
+  }
 }
 
 function setFilter(cat) {
