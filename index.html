@@ -283,24 +283,34 @@ header {
 .btn-share:hover { border-color: var(--text-soft); color: var(--text); }
 .btn-share:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 
-/* Instagram button */
-.btn-insta {
+/* Instagram + WhatsApp row */
+.share-main-row {
+  display: flex;
+  gap: 8px;
   width: 100%;
   max-width: 320px;
-  padding: 14px 24px;
+}
+.btn-insta, .btn-whatsapp {
+  flex: 1;
+  padding: 14px 12px;
   border: none;
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   transition: transform 0.12s, opacity 0.12s;
 }
-.btn-insta:hover { opacity: 0.9; }
-.btn-insta:active { transform: scale(0.97); }
-.btn-insta:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
+.btn-insta {
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+.btn-whatsapp {
+  background: #25D366;
+}
+.btn-insta:hover, .btn-whatsapp:hover { opacity: 0.9; }
+.btn-insta:active, .btn-whatsapp:active { transform: scale(0.97); }
+.btn-insta:focus-visible, .btn-whatsapp:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
 
 /* Story overlay */
 .story-overlay {
@@ -359,6 +369,18 @@ header {
   font-weight: 400;
   font-size: 0.82rem;
 }
+.story-btn.insta-open {
+  color: #fff;
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+.story-hint {
+  color: rgba(255,255,255,0.5);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  text-align: center;
+  line-height: 1.5;
+  margin: -4px 0;
+}
 
 @media (min-width: 481px) {
   .story-preview-wrap canvas {
@@ -411,9 +433,11 @@ footer a:hover { text-decoration: underline; }
 
   <div class="btn-row">
     <button class="btn-main" id="btn-next">Voir un autre vote</button>
-    <button class="btn-insta" id="btn-insta">Partager en story Instagram</button>
+    <div class="share-main-row">
+      <button class="btn-insta" id="btn-insta">📸 Story Instagram</button>
+      <button class="btn-whatsapp" id="btn-wa">💬 WhatsApp</button>
+    </div>
     <div class="share-row">
-      <button class="btn-share" id="btn-wa">💬 WhatsApp</button>
       <button class="btn-share" id="btn-copy">📋 Copier</button>
       <button class="btn-share" id="btn-native">↗ Plus</button>
     </div>
@@ -427,8 +451,9 @@ footer a:hover { text-decoration: underline; }
     <div class="story-preview-wrap">
       <canvas id="storyCanvas"></canvas>
       <div class="story-actions">
-        <button class="story-btn primary" id="storyShare">Partager en story</button>
-        <button class="story-btn secondary" id="storySave">Enregistrer l'image</button>
+        <button class="story-btn primary" id="storySave">Enregistrer l'image</button>
+        <button class="story-btn insta-open" id="storyOpenInsta" style="display:none">Ouvrir Instagram</button>
+        <p class="story-hint" id="storyHint"></p>
         <button class="story-btn close" id="storyClose">Fermer</button>
       </div>
     </div>
@@ -752,10 +777,19 @@ function shareNative() {
 }
 
 // ─── STORY IMAGE GENERATOR ───
+// Preload QR code image
+const qrImage = new Image();
+qrImage.src = QR_DATA;
+
 function openStory() {
   const f = getFiltered();
   const v = f[currentIdx];
-  renderStory(v);
+  // Wait for QR to be loaded before rendering
+  if (!qrImage.complete) {
+    qrImage.onload = function() { renderStory(v); };
+  } else {
+    renderStory(v);
+  }
   document.getElementById('storyOverlay').classList.add('open');
 }
 
@@ -843,9 +877,6 @@ function renderStory(v) {
   ctx.fillText('Source : ' + v.src, W/2, y);
 
   // Bottom section: QR code + URL
-  // QR code
-  const qrImg = new Image();
-  qrImg.src = QR_DATA;
   const qrSize = 140;
   const qrX = W/2 - qrSize/2;
   const qrY = H - 300;
@@ -855,9 +886,9 @@ function renderStory(v) {
   roundRect(ctx, qrX - 20, qrY - 20, qrSize + 40, qrSize + 100, 16);
   ctx.fill();
 
-  // Draw QR (already loaded since it's a data URI)
+  // Draw preloaded QR
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+  ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
   ctx.imageSmoothingEnabled = true;
 
   // "Scanne pour vérifier" text under QR
@@ -889,21 +920,7 @@ function getStoryBlob() {
 }
 
 async function shareStory() {
-  const blob = await getStoryBlob();
-  const file = new File([blob], 'ils-nont-pas-change.png', { type: 'image/png' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: 'Ils n\'ont pas changé',
-        text: 'Ce que le RN vote vraiment.'
-      });
-      showToast('Pense à ajouter le sticker lien dans ta story 🔗');
-    } catch(e) { /* user cancelled */ }
-  } else {
-    saveStory();
-    showToast('Image enregistrée — ajoute-la en story avec le sticker lien 🔗');
-  }
+  // Not used anymore - kept for reference
 }
 
 function saveStory() {
@@ -915,8 +932,20 @@ function saveStory() {
     a.download = 'ils-nont-pas-change.png';
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Image enregistrée');
+    // Show step 2
+    document.getElementById('storySave').textContent = '✓ Image enregistrée';
+    document.getElementById('storySave').style.opacity = '0.5';
+    document.getElementById('storyOpenInsta').style.display = 'block';
+    document.getElementById('storyHint').textContent = 'Ouvre Instagram → + → Story → choisis l\'image dans ta pellicule';
   }, 'image/png');
+}
+
+function openInstagram() {
+  window.open('instagram://app', '_self');
+  // Fallback if Instagram app not installed
+  setTimeout(function() {
+    window.open('https://www.instagram.com', '_blank');
+  }, 500);
 }
 
 function wrapText(ctx, text, maxW) {
@@ -967,11 +996,24 @@ document.getElementById('btn-insta').addEventListener('click', openStory);
 document.getElementById('btn-wa').addEventListener('click', shareWA);
 document.getElementById('btn-copy').addEventListener('click', copyText);
 document.getElementById('btn-native').addEventListener('click', shareNative);
-document.getElementById('storyShare').addEventListener('click', shareStory);
 document.getElementById('storySave').addEventListener('click', saveStory);
-document.getElementById('storyClose').addEventListener('click', closeStory);
+document.getElementById('storyOpenInsta').addEventListener('click', openInstagram);
+document.getElementById('storyClose').addEventListener('click', function() {
+  closeStory();
+  // Reset button states
+  document.getElementById('storySave').textContent = 'Enregistrer l\'image';
+  document.getElementById('storySave').style.opacity = '1';
+  document.getElementById('storyOpenInsta').style.display = 'none';
+  document.getElementById('storyHint').textContent = '';
+});
 document.getElementById('storyOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeStory();
+  if (e.target === this) {
+    closeStory();
+    document.getElementById('storySave').textContent = 'Enregistrer l\'image';
+    document.getElementById('storySave').style.opacity = '1';
+    document.getElementById('storyOpenInsta').style.display = 'none';
+    document.getElementById('storyHint').textContent = '';
+  }
 });
 
 // Show first card
