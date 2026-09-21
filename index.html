@@ -260,21 +260,28 @@ header {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Share button */
+/* Share row */
+.share-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
 .btn-share {
+  flex: 1;
   background: none;
   border: 1px solid var(--border);
   color: var(--text-soft);
   font-family: 'Inter', sans-serif;
-  font-size: 0.82rem;
-  padding: 10px 20px;
+  font-size: 0.75rem;
+  padding: 10px 6px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
-  width: 100%;
-  max-width: 320px;
+  white-space: nowrap;
 }
 .btn-share:hover { border-color: var(--text-soft); color: var(--text); }
+.btn-share:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 
 /* Footer */
 footer {
@@ -319,10 +326,16 @@ footer a:hover { text-decoration: underline; }
 
   <div class="btn-row">
     <button class="btn-main" id="btn-next">Voir un autre vote</button>
-    <button class="btn-share" id="btn-share">Partager cette carte</button>
+    <div class="share-row">
+      <button class="btn-share" id="btn-img" title="Télécharger l'image pour Instagram / stories">📸 Image</button>
+      <button class="btn-share" id="btn-wa" title="Envoyer par WhatsApp">💬 WhatsApp</button>
+      <button class="btn-share" id="btn-copy" title="Copier le texte">📋 Copier</button>
+      <button class="btn-share" id="btn-native" title="Partager">↗ Partager</button>
+    </div>
     <div class="btn-filter" id="filters"></div>
   </div>
   <div class="counter" id="counter"></div>
+  <canvas id="shareCanvas" style="display:none"></canvas>
 
   <footer>
     <p>Toutes les données proviennent de sources publiques et vérifiables : <a href="https://www.assemblee-nationale.fr" target="_blank">assemblee-nationale.fr</a>, <a href="https://datan.fr" target="_blank">datan.fr</a>, <a href="https://www.europarl.europa.eu" target="_blank">europarl.europa.eu</a>. Chaque carte contient un lien direct vers la source.</p>
@@ -616,19 +629,156 @@ function setFilter(cat) {
   next();
 }
 
-function shareCard() {
+function getShareText() {
   const f = getFiltered();
   const v = f[currentIdx];
-  const text = '« ' + v.title + ' »\nLe RN a voté : ' + v.pos + '\n\n' + v.explain + '\n\nSource : ' + v.url + '\n\nilsnontpaschange.fr';
+  return '« ' + v.title + ' »\nLe RN a voté : ' + v.pos + '\n\n' + v.explain + '\n\nSource : ' + v.url;
+}
+
+function copyText() {
+  navigator.clipboard.writeText(getShareText()).then(() => {
+    showToast('Texte copié');
+  }).catch(() => showToast('Erreur'));
+}
+
+function shareWA() {
+  const text = encodeURIComponent(getShareText());
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+function shareNative() {
+  const f = getFiltered();
+  const v = f[currentIdx];
   if (navigator.share) {
-    navigator.share({ title: 'Ils n\'ont pas changé', text: text }).catch(() => {});
+    navigator.share({ title: 'Ils n\'ont pas changé', text: getShareText() }).catch(() => {});
   } else {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('Copié — prêt à partager');
-    }).catch(() => {
-      showToast('Erreur de copie');
-    });
+    copyText();
   }
+}
+
+function generateImage() {
+  const f = getFiltered();
+  const v = f[currentIdx];
+  const c = document.getElementById('shareCanvas');
+  const W = 1080, H = 1350; // 4:5 Instagram
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#f6f5f1';
+  ctx.fillRect(0, 0, W, H);
+
+  // Top accent bar
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, W, 8);
+
+  // Title
+  ctx.fillStyle = '#1a1a2e';
+  ctx.font = 'italic 600 52px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Ils n\'ont pas changé', W/2, 100);
+
+  // Thin line
+  ctx.strokeStyle = '#e8e6e1';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(80, 135); ctx.lineTo(W-80, 135); ctx.stroke();
+
+  // Theme tag
+  ctx.font = '500 28px Inter, sans-serif';
+  ctx.fillStyle = '#6b6b6b';
+  ctx.textAlign = 'center';
+  ctx.fillText(v.cat + (v.date ? ' · ' + v.date : ''), W/2, 190);
+
+  // Vote title — word wrap
+  ctx.font = '600 42px Georgia, serif';
+  ctx.fillStyle = '#2c2c2c';
+  ctx.textAlign = 'center';
+  const titleLines = wrapText(ctx, v.title, W - 160, 42);
+  let y = 260;
+  titleLines.forEach(line => { ctx.fillText(line, W/2, y); y += 54; });
+
+  // Badge
+  y += 20;
+  const badgeColors = {
+    'contre': ['#fdf0ee','#c0392b'],
+    'abstention': ['#fef9ee','#d4880f'],
+    'absent': ['#f4f4f4','#7f8c8d'],
+    'pour-bad': ['#f9f0fc','#8e44ad'],
+    'pour': ['#edf7ee','#27864a']
+  };
+  const bc = badgeColors[v.badge] || badgeColors.contre;
+  const badgeText = 'Le RN a voté : ' + v.pos;
+  ctx.font = '600 30px Inter, sans-serif';
+  const bw = ctx.measureText(badgeText).width + 48;
+  const bx = (W - bw) / 2;
+  ctx.fillStyle = bc[0];
+  roundRect(ctx, bx, y - 32, bw, 50, 10);
+  ctx.fill();
+  ctx.fillStyle = bc[1];
+  ctx.textAlign = 'center';
+  ctx.fillText(badgeText, W/2, y);
+
+  // Explanation — word wrap
+  y += 70;
+  ctx.font = '400 32px Inter, sans-serif';
+  ctx.fillStyle = '#2c2c2c';
+  const expLines = wrapText(ctx, v.explain, W - 160, 32);
+  expLines.forEach(line => { ctx.fillText(line, W/2, y); y += 46; });
+
+  // Source
+  y += 30;
+  ctx.font = '400 24px Inter, sans-serif';
+  ctx.fillStyle = '#6b6b6b';
+  ctx.fillText('Source : ' + v.src, W/2, y);
+
+  // Bottom bar
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, H - 90, W, 90);
+  ctx.fillStyle = '#f6f5f1';
+  ctx.font = '500 30px Inter, sans-serif';
+  ctx.fillText('ilsnontpaschange.netlify.app', W/2, H - 40);
+
+  // Download
+  c.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ils-nont-pas-change-' + v.cat.toLowerCase().replace(/[^a-z]/g,'') + '.png';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Image téléchargée — prête à poster');
+  }, 'image/png');
+}
+
+function wrapText(ctx, text, maxW, fontSize) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(w => {
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && line) {
+      lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
 }
 
 function showToast(msg) {
@@ -651,7 +801,10 @@ CATS.forEach(cat => {
 
 // Init
 document.getElementById('btn-next').addEventListener('click', next);
-document.getElementById('btn-share').addEventListener('click', shareCard);
+document.getElementById('btn-img').addEventListener('click', generateImage);
+document.getElementById('btn-wa').addEventListener('click', shareWA);
+document.getElementById('btn-copy').addEventListener('click', copyText);
+document.getElementById('btn-native').addEventListener('click', shareNative);
 
 // Show first card
 const startIdx = Math.floor(Math.random() * V.length);
