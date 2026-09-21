@@ -834,106 +834,79 @@ function renderStory(v) {
   c.width = W; c.height = H;
   const ctx = c.getContext('2d');
 
-  // Dark gradient background
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#1a1a2e');
-  grad.addColorStop(0.5, '#16213e');
-  grad.addColorStop(1, '#0f0f1a');
-  ctx.fillStyle = grad;
+  // Light warm background
+  ctx.fillStyle = '#F5F2EC';
   ctx.fillRect(0, 0, W, H);
 
-  // Subtle texture dots
-  ctx.fillStyle = 'rgba(255,255,255,0.015)';
-  for (let i = 0; i < 300; i++) {
-    ctx.beginPath();
-    ctx.arc(Math.random()*W, Math.random()*H, Math.random()*2+0.5, 0, Math.PI*2);
-    ctx.fill();
-  }
+  // Top accent gradient line
+  const gradTop = ctx.createLinearGradient(180, 42, W-180, 42);
+  gradTop.addColorStop(0, '#f09433');
+  gradTop.addColorStop(0.25, '#e6683c');
+  gradTop.addColorStop(0.5, '#dc2743');
+  gradTop.addColorStop(0.75, '#cc2366');
+  gradTop.addColorStop(1, '#bc1888');
+  ctx.strokeStyle = gradTop;
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(180, 44); ctx.lineTo(W-180, 44); ctx.stroke();
 
-  // Top — site name
   ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.font = '500 28px Inter, sans-serif';
-  ctx.fillText('ilsnontpaschange.netlify.app', W/2, 100);
+  ctx.fillStyle = '#1a1a30';
+  ctx.font = 'italic 600 62px Georgia, serif';
+  ctx.fillText("Ils n\'ont pas changé", W/2, 110);
 
-  // Title
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'italic 600 64px Georgia, serif';
-  ctx.fillText('Ils n\'ont pas changé', W/2, 220);
-
-  // Decorative line
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.strokeStyle = '#E1DCD4';
   ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(200, 270); ctx.lineTo(W-200, 270); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(200, 145); ctx.lineTo(W-200, 145); ctx.stroke();
 
-  // Theme pill
-  ctx.font = '500 30px Inter, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  ctx.fillText(v.cat + (v.date ? ' · ' + v.date : ''), W/2, 340);
+  ctx.font = '600 30px Inter, sans-serif';
+  ctx.fillStyle = '#787368';
+  ctx.fillText(v.cat, W/2, 200);
 
-  // Vote title
-  ctx.font = '600 50px Georgia, serif';
-  ctx.fillStyle = '#ffffff';
-  const titleLines = wrapText(ctx, v.title, W - 160, 50);
-  let y = 440;
-  titleLines.forEach(line => { ctx.fillText(line, W/2, y); y += 66; });
+  ctx.font = '600 52px Georgia, serif';
+  ctx.fillStyle = '#26262A';
+  const titleLines = wrapText(ctx, v.title, W - 140);
+  let y = 300;
+  titleLines.forEach(line => { ctx.fillText(line, W/2, y); y += 68; });
 
-  // Badge
-  y += 30;
+  y += 40;
   const bc = {
-    'contre': ['#c0392b','#ffffff'], 'abstention': ['#d4880f','#ffffff'],
-    'absent': ['#7f8c8d','#ffffff'], 'pour-bad': ['#8e44ad','#ffffff'],
-    'pour': ['#27864a','#ffffff']
-  }[v.badge] || ['#c0392b','#ffffff'];
-  const badgeText = 'Le RN a voté : ' + v.pos;
-  ctx.font = '700 34px Inter, sans-serif';
+    'contre': ['#FDF0EE','#C83228'],
+    'abstention': ['#FEF8EB','#C3820F'],
+    'absent': ['#F0F0F0','#788287'],
+    'pour-bad': ['#F8F0FC','#8C3CB4'],
+    'pour': ['#EDF8F0','#238246']
+  }[v.badge] || ['#FDF0EE','#C83228'];
+  const badgeText = 'Le RN : ' + v.pos;
+  ctx.font = '700 36px Inter, sans-serif';
   const bw = ctx.measureText(badgeText).width + 60;
   ctx.fillStyle = bc[0];
-  roundRect(ctx, (W-bw)/2, y-36, bw, 56, 12);
+  roundRect(ctx, (W-bw)/2, y-36, bw, 62, 12);
   ctx.fill();
   ctx.fillStyle = bc[1];
   ctx.fillText(badgeText, W/2, y);
 
-  // Explanation
   y += 80;
-  ctx.font = '400 36px Inter, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  const expLines = wrapText(ctx, v.explain, W - 160, 36);
-  expLines.forEach(line => { ctx.fillText(line, W/2, y); y += 52; });
+  ctx.font = '400 38px Inter, sans-serif';
+  ctx.fillStyle = '#26262A';
+  const expLines = wrapText(ctx, v.explain, W - 140);
+  expLines.forEach(line => { ctx.fillText(line, W/2, y); y += 56; });
 
-  // Source
-  y += 40;
+  y += 35;
   ctx.font = '400 26px Inter, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillStyle = '#787368';
   ctx.fillText('Source : ' + v.src, W/2, y);
 
-  // Bottom section: QR code + URL
-  const qrSize = 140;
-  const qrX = W/2 - qrSize/2;
-  const qrY = H - 300;
-
-  // White rounded bg for QR
-  ctx.fillStyle = 'rgba(255,255,255,0.12)';
-  roundRect(ctx, qrX - 20, qrY - 20, qrSize + 40, qrSize + 100, 16);
-  ctx.fill();
-
-  // Draw preloaded QR
+  // Bottom dark bar with QR
+  ctx.fillStyle = '#1a1a30';
+  ctx.fillRect(0, H-110, W, 110);
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
+  ctx.drawImage(qrImage, 80, H-95, 60, 60);
   ctx.imageSmoothingEnabled = true;
+  ctx.fillStyle = '#C8C6C0';
+  ctx.font = '500 28px Inter, sans-serif';
+  ctx.fillText('ilsnontpaschange.netlify.app', W/2 + 30, H-55);
 
-  // "Scanne pour vérifier" text under QR
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.font = '500 22px Inter, sans-serif';
-  ctx.fillText('Scanne pour vérifier', W/2, qrY + qrSize + 35);
-
-  // URL at very bottom
-  ctx.fillStyle = 'rgba(255,255,255,0.3)';
-  ctx.font = '400 24px Inter, sans-serif';
-  ctx.fillText('ilsnontpaschange.netlify.app', W/2, H - 50);
-
-  // Bottom accent line
-  const gradBot = ctx.createLinearGradient(200, H-20, W-200, H-20);
+  const gradBot = ctx.createLinearGradient(180, H-113, W-180, H-113);
   gradBot.addColorStop(0, '#f09433');
   gradBot.addColorStop(0.25, '#e6683c');
   gradBot.addColorStop(0.5, '#dc2743');
@@ -941,7 +914,7 @@ function renderStory(v) {
   gradBot.addColorStop(1, '#bc1888');
   ctx.strokeStyle = gradBot;
   ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(200, H-15); ctx.lineTo(W-200, H-15); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(180, H-113); ctx.lineTo(W-180, H-113); ctx.stroke();
 }
 
 function getStoryBlob() {
