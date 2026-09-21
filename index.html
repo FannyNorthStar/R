@@ -442,6 +442,8 @@ footer a:hover { text-decoration: underline; }
 <div class="toast" id="toast"></div>
 
 <script>
+const QR_DATA = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAABXklEQVR4nJ1WQZLDMAiDjP//ZfdSdmRFAne5pDUySBic5N57h7HMzPLX78zMiAi1r3zOH5Oz1tvNAjvt23vvpZIj4/LxGu4pH1ami/tMKrqS5dd+qcpV0lLpFPBTVUQGnda7s0KfIqHirg5QPqeUz1L1gos7miulwt0kGmfvAJu55Q7lmIx5VOlqMz/d6Li9Nq5qBDRcRz//7nAvAirJ1FiOpEwQ70mwAKfov0rRf9w2V4MtlJTdXviPczJjxjHBarTCYQNyUy51dyIQwRxQ+RSRVwW7xlDNNTWbO8eDDC7cDLaba6VSxTjm1KntGHfqVbX+MK6MLpgjoNZx/1GtrlTqfn2VSpSws3x11cCcyWBixE5ra1KqFCli6l3qRC1m4RRiCW/wapYLd/U1yBhuFr4gHOFD6WQc2CVxZ802JuU7VfmdIkUmAj5BE6wjwAlQrXvLsPqrOVX/p2bqmu4D0Eg2r/CA7LEAAAAASUVORK5CYII=';
+
 const V=[
 // ─── POUVOIR D'ACHAT ───
 {cat:"Pouvoir d'achat",title:"Augmentation du SMIC à 1 500 € nets",pos:"CONTRE",badge:"contre",date:"Juillet 2022",lvl:"Assemblée nationale",
@@ -840,16 +842,36 @@ function renderStory(v) {
   ctx.fillStyle = 'rgba(255,255,255,0.35)';
   ctx.fillText('Source : ' + v.src, W/2, y);
 
-  // Bottom CTA
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  roundRect(ctx, 140, H - 200, W - 280, 70, 35);
-  ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.font = '500 28px Inter, sans-serif';
-  ctx.fillText('55 votes vérifiés ↗', W/2, H - 155);
+  // Bottom section: QR code + URL
+  // QR code
+  const qrImg = new Image();
+  qrImg.src = QR_DATA;
+  const qrSize = 140;
+  const qrX = W/2 - qrSize/2;
+  const qrY = H - 300;
 
-  // Bottom accent
-  const gradBot = ctx.createLinearGradient(200, H-60, W-200, H-60);
+  // White rounded bg for QR
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  roundRect(ctx, qrX - 20, qrY - 20, qrSize + 40, qrSize + 100, 16);
+  ctx.fill();
+
+  // Draw QR (already loaded since it's a data URI)
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+  ctx.imageSmoothingEnabled = true;
+
+  // "Scanne pour vérifier" text under QR
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '500 22px Inter, sans-serif';
+  ctx.fillText('Scanne pour vérifier', W/2, qrY + qrSize + 35);
+
+  // URL at very bottom
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '400 24px Inter, sans-serif';
+  ctx.fillText('ilsnontpaschange.netlify.app', W/2, H - 50);
+
+  // Bottom accent line
+  const gradBot = ctx.createLinearGradient(200, H-20, W-200, H-20);
   gradBot.addColorStop(0, '#f09433');
   gradBot.addColorStop(0.25, '#e6683c');
   gradBot.addColorStop(0.5, '#dc2743');
@@ -857,7 +879,7 @@ function renderStory(v) {
   gradBot.addColorStop(1, '#bc1888');
   ctx.strokeStyle = gradBot;
   ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(200, H-60); ctx.lineTo(W-200, H-60); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(200, H-15); ctx.lineTo(W-200, H-15); ctx.stroke();
 }
 
 function getStoryBlob() {
@@ -876,10 +898,11 @@ async function shareStory() {
         title: 'Ils n\'ont pas changé',
         text: 'Ce que le RN vote vraiment.'
       });
+      showToast('Pense à ajouter le sticker lien dans ta story 🔗');
     } catch(e) { /* user cancelled */ }
   } else {
     saveStory();
-    showToast('Image enregistrée — ouvre Instagram et ajoute-la en story');
+    showToast('Image enregistrée — ajoute-la en story avec le sticker lien 🔗');
   }
 }
 
