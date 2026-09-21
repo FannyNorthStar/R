@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ils n'ont pas changé</title>
+<meta name="description" content="Ce que le RN vote vraiment. Les faits, les sources, rien d'autre.">
+<meta property="og:title" content="Ils n'ont pas changé">
+<meta property="og:description" content="Ce que le RN vote vraiment à l'Assemblée et au Parlement européen. Vérifiable, sourcé.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f5f1;
+  --card: #ffffff;
+  --text: #2c2c2c;
+  --text-soft: #6b6b6b;
+  --accent: #1a1a2e;
+  --contre: #c0392b;
+  --contre-bg: #fdf0ee;
+  --abstention: #d4880f;
+  --abstention-bg: #fef9ee;
+  --absent: #7f8c8d;
+  --absent-bg: #f4f4f4;
+  --pour-bad: #8e44ad;
+  --pour-bad-bg: #f9f0fc;
+  --border: #e8e6e1;
+  --link: #2563eb;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141418;
+    --card: #1e1e24;
+    --text: #e8e6e1;
+    --text-soft: #9a9a9a;
+    --accent: #e8e6e1;
+    --contre-bg: #2a1a18;
+    --abstention-bg: #2a2418;
+    --absent-bg: #1e1e1e;
+    --pour-bad-bg: #241a28;
+    --border: #333;
+    --link: #60a5fa;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141418;
+  --card: #1e1e24;
+  --text: #e8e6e1;
+  --text-soft: #9a9a9a;
+  --accent: #e8e6e1;
+  --contre-bg: #2a1a18;
+  --abstention-bg: #2a2418;
+  --absent-bg: #1e1e1e;
+  --pour-bad-bg: #241a28;
+  --border: #333;
+  --link: #60a5fa;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+:root {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.container {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.site-title {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.site-title span {
+  font-style: italic;
+  font-weight: 400;
+}
+.tagline {
+  font-size: 0.92rem;
+  color: var(--text-soft);
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* Card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  transition: opacity 0.3s ease;
+}
+.card.fade-out { opacity: 0; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.theme-tag {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+  background: var(--bg);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.level-tag {
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  margin-left: auto;
+}
+
+.card-title {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.vote-badge {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+.vote-badge.contre { background: var(--contre-bg); color: var(--contre); }
+.vote-badge.abstention { background: var(--abstention-bg); color: var(--abstention); }
+.vote-badge.absent { background: var(--absent-bg); color: var(--absent); }
+.vote-badge.pour-bad { background: var(--pour-bad-bg); color: var(--pour-bad); }
+
+.card-explain {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+
+.source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 0;
+}
+.source-link:hover { text-decoration: underline; }
+.source-link::before {
+  content: '↗';
+  font-size: 0.9em;
+}
+
+/* Buttons */
+.btn-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.btn-main {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 14px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+  width: 100%;
+  max-width: 320px;
+}
+.btn-main:hover { opacity: 0.88; }
+.btn-main:active { transform: scale(0.98); }
+.btn-main:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
+
+.btn-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.filter-chip {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip:hover, .filter-chip.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.filter-chip:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+
+.counter {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-top: 16px;
+}
+
+/* Copy toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Share button */
+.btn-share {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  max-width: 320px;
+}
+.btn-share:hover { border-color: var(--text-soft); color: var(--text); }
+
+/* Footer */
+footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer p {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  line-height: 1.7;
+  max-width: 440px;
+  margin: 0 auto 12px;
+}
+footer a { color: var(--link); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .container { padding: 28px 16px 48px; }
+  .card { padding: 22px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1 class="site-title">Ils n'ont <span>pas</span> changé</h1>
+    <p class="tagline">Ce que le RN vote vraiment. Pas de commentaire, juste les faits — et les liens pour vérifier.</p>
+  </header>
+
+  <div class="card" id="card">
+    <div class="card-meta">
+      <span class="theme-tag" id="theme"></span>
+      <span class="level-tag" id="level"></span>
+    </div>
+    <h2 class="card-title" id="title"></h2>
+    <div class="vote-badge" id="badge"></div>
+    <p class="card-explain" id="explain"></p>
+    <a class="source-link" id="source" href="#" target="_blank" rel="noopener"></a>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-main" id="btn-next">Voir un autre vote</button>
+    <button class="btn-share" id="btn-share">Partager cette carte</button>
+    <div class="btn-filter" id="filters"></div>
+  </div>
+  <div class="counter" id="counter"></div>
+
+  <footer>
+    <p>Toutes les données proviennent de sources publiques et vérifiables : <a href="https://www.assemblee-nationale.fr" target="_blank">assemblee-nationale.fr</a>, <a href="https://datan.fr" target="_blank">datan.fr</a>, <a href="https://www.europarl.europa.eu" target="_blank">europarl.europa.eu</a>. Chaque carte contient un lien direct vers la source.</p>
+    <p>Datan est un outil reconnu d'analyse parlementaire, fondé par Awenig Marié, docteur en sciences politiques, et soutenu par un conseil scientifique présidé par Olivier Costa, directeur de recherche au CNRS.</p>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const V=[
+// ─── POUVOIR D'ACHAT ───
+{cat:"Pouvoir d'achat",title:"Augmentation du SMIC à 1 500 € nets",pos:"CONTRE",badge:"contre",date:"Juillet 2022",lvl:"Assemblée nationale",
+explain:"Si vous êtes payé au SMIC, votre salaire aurait pu augmenter. Le RN a voté contre, aux côtés de la majorité Macron.",
+url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
+
+{cat:"Pouvoir d'achat",title:"Indexation des salaires sur l'inflation",pos:"ABSENT",badge:"absent",date:"Novembre 2023",lvl:"Assemblée nationale",
+explain:"Quand les prix montent, votre salaire ne suit pas. Cette loi proposait qu'il suive automatiquement. Le RN n'est pas venu voter.",
+url:"https://www.revolutionpermanente.fr/SMIC-super-profits-gel-des-loyers-les-votes-les-plus-patronaux-du-Rassemblement-National-34093",src:"Assemblée nationale via presse"},
+
+{cat:"Pouvoir d'achat",title:"Gel des loyers",pos:"CONTRE",badge:"contre",date:"Mai 2023",lvl:"Assemblée nationale",
+explain:"Vous êtes locataire, votre loyer augmente. Un amendement proposait de geler les hausses. Le RN a voté contre.",
+url:"https://datan.fr/votes/legislature-16/vote_1762",src:"datan.fr"},
+
+{cat:"Pouvoir d'achat",title:"Retour de l'ISF (impôt sur la fortune)",pos:"ABSTENTION",badge:"abstention",date:"Octobre 2022",lvl:"Assemblée nationale",
+explain:"Rétablir l'impôt sur les grandes fortunes pour financer les services publics. Le RN ne s'est pas prononcé.",
+url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
+
+{cat:"Pouvoir d'achat",title:"Taxation des superprofits pétroliers et gaziers",pos:"CONTRE",badge:"contre",date:"Octobre 2022",lvl:"Assemblée nationale",
+explain:"Les géants du pétrole ont fait des bénéfices records pendant que vos factures d'énergie explosaient. Le RN a refusé de les taxer.",
+url:"https://www.revolutionpermanente.fr/SMIC-super-profits-gel-des-loyers-les-votes-les-plus-patronaux-du-Rassemblement-National-34093",src:"Assemblée nationale via presse"},
+
+{cat:"Pouvoir d'achat",title:"Gratuité des cantines et fournitures scolaires pour les familles modestes",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Des familles n'arrivent pas à payer la cantine ou les cahiers de leurs enfants. Le RN a voté contre cette aide.",
+url:"https://www.cfdt.fr/sinformer/toutes-les-actualites-par-dossiers-thematiques/votons-pour-les-droits-des-femmes-et-contre-le-rassemblement-national",src:"CFDT (synthèse sourcée)"},
+
+{cat:"Pouvoir d'achat",title:"Revalorisation des petites retraites",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Une proposition d'augmenter les petites retraites. Le RN a voté contre.",
+url:"https://www.cfdt.fr/sinformer/toutes-les-actualites-par-dossiers-thematiques/votons-pour-les-droits-des-femmes-et-contre-le-rassemblement-national",src:"CFDT (synthèse sourcée)"},
+
+{cat:"Pouvoir d'achat",title:"Salaire minimum européen",pos:"CONTRE",badge:"contre",date:"Septembre 2022",lvl:"Parlement européen",
+explain:"Cette directive devait relever les salaires les plus bas de 25 millions de travailleurs en Europe et réduire la concurrence entre pays. Le RN a voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Pouvoir d'achat",title:"Encadrement de la rémunération des stagiaires",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Mieux encadrer la rémunération des stagiaires en Europe. Le RN a voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Pouvoir d'achat",title:"Taxe sur les bureaux vacants pour créer des logements",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Des immeubles de bureaux restent vides pendant que des gens cherchent un logement. Le RN a refusé de taxer ces bureaux pour les transformer en appartements.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+// ─── SANTÉ ───
+{cat:"Santé",title:"Lutte contre les déserts médicaux (texte transpartisan)",pos:"ABSTENTION",badge:"abstention",date:"Mai 2025",lvl:"Assemblée nationale",
+explain:"Vous habitez dans une zone où il n'y a plus de médecin. Une loi signée par 250 députés de tous bords proposait d'agir. Le RN s'est abstenu.",
+url:"https://www.assemblee-nationale.fr/dyn/17/scrutins/1607",src:"assemblee-nationale.fr — scrutin 1607"},
+
+{cat:"Santé",title:"Régulation de l'installation des médecins",pos:"CONTRE",badge:"contre",date:"Avril 2025",lvl:"Assemblée nationale",
+explain:"Il y a trop de médecins dans certaines villes et zéro dans d'autres. Ce texte voulait réguler les installations pour mieux les répartir. Le RN a voté contre.",
+url:"https://www.assemblee-nationale.fr/dyn/17/scrutins/1214",src:"assemblee-nationale.fr — scrutin 1214"},
+
+{cat:"Santé",title:"Nombre minimum de soignants par patient hospitalisé",pos:"ABSTENTION",badge:"abstention",date:"Janvier 2025",lvl:"Assemblée nationale",
+explain:"À l'hôpital, une seule infirmière s'occupe parfois de 15 patients la nuit. Ce texte fixait un minimum. Le RN s'est abstenu.",
+url:"https://datan.fr/votes/legislature-17/vote_605",src:"datan.fr — vote 605"},
+
+{cat:"Santé",title:"Revalorisation des personnels soignants",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Améliorer les salaires et les conditions de travail des soignants qui s'occupent de vous à l'hôpital. Le RN a voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Santé",title:"Aide à mourir pour les malades en fin de vie",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Permettre aux personnes atteintes de maladies incurables de choisir une fin de vie digne. Le RN a voté contre.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+{cat:"Santé",title:"Santé mentale au travail",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Un rapport demandait de mieux protéger la santé mentale des travailleurs. Le RN a voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Santé",title:"Bilan global : le RN favorable à la santé dans 10% des votes",pos:"10%",badge:"contre",date:"2022–2026",lvl:"Assemblée nationale",
+explain:"Sur près de 250 votes touchant à la santé des Français, le RN a voté dans le sens de son amélioration une fois sur dix. C'est l'un des pires scores de l'Assemblée.",
+url:"https://bonpote.com/pollution-pesticides-et-cadmium-le-rn-vote-contre-la-sante-des-francais/",src:"bonpote.com — analyse de 11 000 votes"},
+
+// ─── AGRICULTURE & ALIMENTATION ───
+{cat:"Agriculture",title:"Prix planchers pour les agriculteurs",pos:"ABSTENTION",badge:"abstention",date:"Avril 2024",lvl:"Assemblée nationale",
+explain:"18% des agriculteurs vivent sous le seuil de pauvreté. Ce texte garantissait qu'on ne leur achète pas leur production en dessous de ce qu'elle coûte à produire. Le RN s'est abstenu.",
+url:"https://www.assemblee-nationale.fr/dyn/16/scrutins/3653",src:"assemblee-nationale.fr — scrutin 3653"},
+
+{cat:"Agriculture",title:"Plafonnement des marges de la grande distribution",pos:"ABSTENTION",badge:"abstention",date:"",lvl:"Assemblée nationale",
+explain:"La grande distribution se fait des marges importantes sur les produits alimentaires pendant que les agriculteurs peinent à vivre de leur travail. Le RN s'est abstenu.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+{cat:"Agriculture",title:"Soutien aux filières agricoles bio en crise",pos:"ABSTENTION",badge:"abstention",date:"Novembre 2023",lvl:"Assemblée nationale",
+explain:"Les agriculteurs bio traversent une crise. Un texte proposait de les soutenir financièrement. Le RN s'est abstenu.",
+url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
+
+{cat:"Agriculture",title:"Réintroduction des néonicotinoïdes (pesticides tueurs d'abeilles)",pos:"POUR la réintroduction",badge:"pour-bad",date:"",lvl:"Assemblée nationale",
+explain:"Les néonicotinoïdes sont des pesticides qui tuent les abeilles et les pollinisateurs, essentiels à l'agriculture. Ils avaient été interdits. Le RN a voté pour les réautoriser.",
+url:"https://bonpote.com/pollution-pesticides-et-cadmium-le-rn-vote-contre-la-sante-des-francais/",src:"bonpote.com"},
+
+{cat:"Agriculture",title:"Réduction de l'usage des pesticides",pos:"CONTRE (systématique)",badge:"contre",date:"2022–2026",lvl:"Assemblée nationale",
+explain:"Les pesticides sont liés à des cancers, notamment chez les agriculteurs et les enfants vivant près des champs. Sur l'ensemble des votes liés aux pesticides, le RN s'oppose quasi systématiquement à leur réduction.",
+url:"https://bonpote.com/pollution-pesticides-et-cadmium-le-rn-vote-contre-la-sante-des-francais/",src:"bonpote.com — analyse détaillée"},
+
+{cat:"Agriculture",title:"Taxe sur la publicité pour aliments nocifs pour la santé",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Limiter les pubs pour la malbouffe, y compris celles qui ciblent les enfants. Le RN a voté contre.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+{cat:"Agriculture",title:"Option végétarienne en restauration collective",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Proposer — pas imposer — un menu végétarien dans les cantines scolaires. Le RN a voté contre.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+// ─── ENVIRONNEMENT ───
+{cat:"Environnement",title:"Protection contre les PFAS (polluants éternels)",pos:"CONTRE",badge:"contre",date:"Avril 2024",lvl:"Assemblée nationale",
+explain:"Les PFAS sont des substances chimiques qu'on retrouve dans l'eau du robinet, les poêles, les emballages. Elles sont liées à des cancers et des problèmes de fertilité. Le RN a voté contre la loi qui visait à protéger la population.",
+url:"https://www.assemblee-nationale.fr/dyn/16/scrutins/3643",src:"assemblee-nationale.fr — scrutin 3643"},
+
+{cat:"Environnement",title:"Exclusion des ustensiles de cuisine du texte sur les PFAS",pos:"POUR l'exclusion",badge:"pour-bad",date:"",lvl:"Assemblée nationale",
+explain:"Quand un texte sur les PFAS est voté, le RN a voté pour en exclure les poêles et casseroles — les objets avec lesquels vous cuisinez tous les jours.",
+url:"https://stoprn.hop.kim/",src:"stoprn.hop.kim (données Datan)"},
+
+{cat:"Environnement",title:"Accord de Paris sur le climat",pos:"CONTRE",badge:"contre",date:"2016",lvl:"Parlement européen",
+explain:"L'accord mondial qui engage les pays à limiter le réchauffement climatique. Marine Le Pen et les eurodéputés RN ont voté contre.",
+url:"https://www.assemblee-nationale.fr/dyn/14/questions/QANR5L14QG4213.pdf",src:"assemblee-nationale.fr — question au gouvernement"},
+
+{cat:"Environnement",title:"Neutralité carbone 2040 (objectif -90% émissions)",pos:"CONTRE",badge:"contre",date:"Février 2026",lvl:"Parlement européen",
+explain:"Le plan européen pour réduire les émissions de gaz à effet de serre de 90% d'ici 2040, face aux canicules et aux inondations. Le RN a voté contre.",
+url:"https://bonpote.com/exclusif-le-rn-continue-de-voter-massivement-avec-lafd-au-parlement-europeen/",src:"bonpote.com"},
+
+{cat:"Environnement",title:"Fonds social pour le climat (aide à la rénovation et véhicule propre)",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Ce fonds aidait les ménages modestes à rénover leur logement, acheter un véhicule moins polluant ou installer une pompe à chaleur. Le RN a voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Environnement",title:"Gratuité des 40 premiers litres d'eau quotidiens",pos:"ABSENT",badge:"absent",date:"Juillet 2022",lvl:"Assemblée nationale",
+explain:"Rendre gratuits les premiers litres d'eau par jour — le strict nécessaire pour boire, cuisiner, se laver. Le RN n'a pas voté.",
+url:"https://www.revolutionpermanente.fr/SMIC-super-profits-gel-des-loyers-les-votes-les-plus-patronaux-du-Rassemblement-National-34093",src:"Assemblée nationale via presse"},
+
+{cat:"Environnement",title:"Bilan global : adaptation climatique favorable dans 16% des votes",pos:"16%",badge:"contre",date:"2022–2026",lvl:"Assemblée nationale",
+explain:"Canicules, inondations, sécheresses : sur tous les votes liés à l'adaptation au changement climatique, le RN a voté dans le bon sens moins d'une fois sur six. C'est le pire score de l'Assemblée.",
+url:"https://bonpote.com/comment-le-rn-sabote-ladaptation-climatique-a-lassemblee-nationale/",src:"bonpote.com — analyse de 259 votes"},
+
+// ─── DROITS ───
+{cat:"Droits",title:"Inscription de l'IVG dans la Constitution",pos:"CONTRE (seul parti)",badge:"contre",date:"",lvl:"Assemblée nationale (Congrès)",
+explain:"Inscrire le droit à l'avortement dans la Constitution pour le protéger durablement. Le RN est le seul parti dont des députés ont voté contre.",
+url:"https://www.assemblee-nationale.fr/dyn/16/scrutins/629",src:"assemblee-nationale.fr — scrutin 629"},
+
+{cat:"Droits",title:"Prise en compte du consentement dans la définition du viol",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"La France est un des rares pays européens où le viol n'est pas défini par l'absence de consentement. Un texte proposait de changer ça. Le RN a voté contre.",
+url:"https://datan.fr/groupes/legislature-17/rn/votes",src:"datan.fr"},
+
+{cat:"Droits",title:"Accès des femmes aux responsabilités dans la fonction publique",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Favoriser l'accès des femmes aux postes de direction dans l'administration. Le RN a voté contre.",
+url:"https://datan.fr/groupes/legislature-16/rn/votes",src:"datan.fr"},
+
+{cat:"Droits",title:"Parité femmes-hommes aux élections municipales (toutes communes)",pos:"CONTRE",badge:"contre",date:"",lvl:"Assemblée nationale",
+explain:"Aujourd'hui les petites communes ne sont pas obligées de présenter autant de femmes que d'hommes sur leurs listes. Ce texte proposait de l'étendre à toutes. Le RN a voté contre.",
+url:"https://datan.fr/groupes/legislature-17/rn/votes",src:"datan.fr"},
+
+{cat:"Droits",title:"Transparence salariale hommes-femmes",pos:"ABSTENTION",badge:"abstention",date:"2022",lvl:"Parlement européen",
+explain:"Obliger les entreprises à publier les écarts de salaire entre hommes et femmes pour enfin pouvoir les réduire. Le RN s'est abstenu.",
+url:"https://basta.media/parlement-europeen-RN-oppose-droits-des-femmes-salaire-minimum-Bardella-LePen-Elections-UE",src:"basta.media"},
+
+{cat:"Droits",title:"Durcissement de l'amende pour harcèlement de rue",pos:"CONTRE",badge:"contre",date:"Novembre 2022",lvl:"Assemblée nationale",
+explain:"Renforcer les sanctions pour le harcèlement de rue. Le RN a voté contre.",
+url:"https://www.cfdt.fr/sinformer/toutes-les-actualites-par-dossiers-thematiques/votons-pour-les-droits-des-femmes-et-contre-le-rassemblement-national",src:"CFDT (synthèse sourcée)"},
+
+// ─── TRAVAIL ───
+{cat:"Travail",title:"Droit à la déconnexion",pos:"ABSTENTION",badge:"abstention",date:"",lvl:"Parlement européen",
+explain:"Ne plus être obligé de répondre aux mails professionnels le soir et le week-end. Le RN s'est abstenu.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+{cat:"Travail",title:"Régulation des plateformes (Uber, Deliveroo…)",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Donner de vrais droits de salariés aux livreurs et chauffeurs de plateformes. Le RN a voté contre.",
+url:"https://cgtafpa.fr/les-9-votes-qui-montrent-limposture-sociale/",src:"CGT AFPA (votes européens sourcés)"},
+
+{cat:"Travail",title:"Dialogue social dans les comités d'entreprise européens",pos:"CONTRE",badge:"contre",date:"Juin 2023",lvl:"Parlement européen",
+explain:"Renforcer la voix des salariés face aux directions dans les grandes entreprises. Le RN a voté contre.",
+url:"https://www.cgt.fr/votesRN",src:"cgt.fr (votes européens sourcés)"},
+
+// ─── ÉDUCATION ───
+{cat:"Éducation",title:"Coopération entre universités européennes",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Permettre aux étudiants de plus facilement étudier dans d'autres pays européens. Le RN a voté contre, aux côtés de l'extrême droite allemande (AfD).",
+url:"https://bonpote.com/exclusif-le-rn-continue-de-voter-massivement-avec-lafd-au-parlement-europeen/",src:"bonpote.com"},
+
+{cat:"Éducation",title:"Éducation aux médias (repérer les fausses informations)",pos:"CONTRE",badge:"contre",date:"",lvl:"Parlement européen",
+explain:"Apprendre aux jeunes à identifier les fausses informations et développer leur esprit critique. Le RN a voté contre.",
+url:"https://bonpote.com/exclusif-le-rn-continue-de-voter-massivement-avec-lafd-au-parlement-europeen/",src:"bonpote.com"},
+
+// ─── MUNICIPAL ───
+{cat:"Municipal",title:"Hénin-Beaumont : suppression de la subvention à la Ligue des droits de l'Homme",pos:"8 jours après l'élection",badge:"contre",date:"2014",lvl:"Mairie RN",
+explain:"La Ligue des droits de l'Homme aide les habitants face à l'administration, au logement, aux discriminations. Le maire RN lui a coupé les fonds et le local en 8 jours.",
+url:"https://vert.eco/chaleurs-actuelles/municipales-2026-la-ou-lextreme-droite-est-au-pouvoir-les-habitants-sont-plus-exposes-aux-risques-climatiques-selon-oxfam/",src:"vert.eco"},
+
+{cat:"Municipal",title:"Hénin-Beaumont : réduction des subventions à l'éducation populaire",pos:"Subventions coupées",badge:"contre",date:"2014–2026",lvl:"Mairie RN",
+explain:"Les cours du soir pour apprendre à lire, les ateliers pour les enfants après l'école, les projets contre les discriminations : les budgets ont été drastiquement réduits.",
+url:"https://www.mediacites.fr/on-a-deja-essaye/premieres-manoeuvres/",src:"Mediacités — enquête « On a déjà essayé »"},
+
+{cat:"Municipal",title:"Fréjus : suppression de la subvention au Planning familial",pos:"Subvention coupée",badge:"contre",date:"",lvl:"Mairie RN",
+explain:"Le Planning familial, c'est là où les femmes trouvent de l'aide pour la contraception, les grossesses, les violences conjugales. Le maire RN a coupé sa subvention.",
+url:"https://www.streetpress.com/1770891413-coupures-budgetaires-amis-plongee-comptes-dix-villes-dirigee-extreme-droite-municipales-beaucaire-frejus/",src:"StreetPress — enquête budgets"},
+
+{cat:"Municipal",title:"Beaucaire : suppression de la subvention au centre d'information pour le droit des femmes",pos:"Subvention coupée",badge:"contre",date:"",lvl:"Mairie RN",
+explain:"L'endroit où les femmes victimes de violences trouvent une aide juridique gratuite. Le maire RN a coupé sa subvention.",
+url:"https://www.streetpress.com/1770891413-coupures-budgetaires-amis-plongee-comptes-dix-villes-dirigee-extreme-droite-municipales-beaucaire-frejus/",src:"StreetPress — enquête budgets"},
+
+{cat:"Municipal",title:"Perpignan : 50 000 € pour le cercle algérianiste, 0 € pour les associations catalanistes",pos:"Réorientation",badge:"pour-bad",date:"2020–2026",lvl:"Mairie RN",
+explain:"De l'argent public versé à une association de nostalgiques de l'Algérie française, pendant que les associations de culture locale ne reçoivent plus rien.",
+url:"https://lepoing.net/a-perpignan-les-associations-catalanistes-ne-touchent-pas-dargent-de-lextreme-droite/",src:"Le Poing + StreetPress"},
+
+{cat:"Municipal",title:"Nouvelles mairies RN 2026 : suppression des commémorations",pos:"Supprimées",badge:"contre",date:"2026",lvl:"Mairies RN",
+explain:"En moins de trois mois, les nouveaux maires RN ont supprimé des commémorations du 1er-Mai et de l'abolition de l'esclavage, et fermé des centres sociaux.",
+url:"https://www.mediacites.fr/on-a-deja-essaye/premieres-manoeuvres/",src:"Mediacités — enquête « On a déjà essayé »"},
+];
+
+const CATS = [...new Set(V.map(v => v.cat))];
+let currentIdx = -1;
+let activeFilter = null;
+
+function getFiltered() {
+  if (!activeFilter) return V;
+  return V.filter(v => v.cat === activeFilter);
+}
+
+function show(v, animate) {
+  const card = document.getElementById('card');
+  if (animate) {
+    card.classList.add('fade-out');
+    setTimeout(() => { fill(v); card.classList.remove('fade-out'); }, 250);
+  } else {
+    fill(v);
+  }
+}
+
+function fill(v) {
+  document.getElementById('theme').textContent = v.cat;
+  document.getElementById('level').textContent = (v.date ? v.date + ' · ' : '') + v.lvl;
+  document.getElementById('title').textContent = v.title;
+  const badge = document.getElementById('badge');
+  badge.textContent = 'Le RN a voté : ' + v.pos;
+  badge.className = 'vote-badge ' + v.badge;
+  document.getElementById('explain').textContent = v.explain;
+  const src = document.getElementById('source');
+  src.href = v.url;
+  src.textContent = 'Vérifier — ' + v.src;
+  const f = getFiltered();
+  const idx = f.indexOf(v);
+  document.getElementById('counter').textContent = (idx + 1) + ' / ' + f.length + ' votes référencés';
+}
+
+function next() {
+  const f = getFiltered();
+  let idx;
+  do { idx = Math.floor(Math.random() * f.length); } while (idx === currentIdx && f.length > 1);
+  currentIdx = idx;
+  show(f[idx], true);
+}
+
+function setFilter(cat) {
+  activeFilter = (activeFilter === cat) ? null : cat;
+  currentIdx = -1;
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.cat === activeFilter);
+  });
+  next();
+}
+
+function shareCard() {
+  const f = getFiltered();
+  const v = f[currentIdx];
+  const text = '« ' + v.title + ' »\nLe RN a voté : ' + v.pos + '\n\n' + v.explain + '\n\nSource : ' + v.url + '\n\nilsnontpaschange.fr';
+  if (navigator.share) {
+    navigator.share({ title: 'Ils n\'ont pas changé', text: text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copié — prêt à partager');
+    }).catch(() => {
+      showToast('Erreur de copie');
+    });
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Build filter chips
+const filtersEl = document.getElementById('filters');
+CATS.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-chip';
+  btn.textContent = cat;
+  btn.dataset.cat = cat;
+  btn.addEventListener('click', () => setFilter(cat));
+  filtersEl.appendChild(btn);
+});
+
+// Init
+document.getElementById('btn-next').addEventListener('click', next);
+document.getElementById('btn-share').addEventListener('click', shareCard);
+
+// Show first card
+const startIdx = Math.floor(Math.random() * V.length);
+currentIdx = startIdx;
+show(V[startIdx], false);
+</script>
+</body>
+</html>
